@@ -1,1 +1,27 @@
-*.js linguist-detectable=false
+# Auto detect text files and perform LF normalization
+* text=auto
+
+# Ignore JavaScript files in scripts directory
+scripts/**/*.js -text
+scripts/**/*.js.map -text
+
+# TypeScript files
+*.ts text
+*.tsx text
+
+# JSON files
+*.json text
+
+# YAML files
+*.yml text
+*.yaml text
+
+# Markdown files
+*.md text
+
+# Shell scripts
+*.sh text eol=lf
+
+# Git config
+.gitattributes text
+.gitignore text

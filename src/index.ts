@@ -177,8 +177,9 @@ class Workflow {
       sigFunctionActionsCode
     ].join('\n');
 
-    await mkdir(playerId, { recursive: true });
-    await writeFile(join(playerId, 'base.js'), code);
+    const scriptDir = join('scripts', playerId);
+    await mkdir(scriptDir, { recursive: true });
+    await writeFile(join(scriptDir, 'base.js'), code);
   }
 
   async run(): Promise<void> {
