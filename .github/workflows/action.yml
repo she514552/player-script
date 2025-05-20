@@ -26,7 +26,7 @@ jobs:
           bun-version: latest
 
       - name: Install dependencies
-        run: bun install
+        run: bun install --production
 
       - name: Run script and detect new player script
         id: run-script
