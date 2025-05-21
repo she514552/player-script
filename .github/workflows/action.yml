@@ -1,4 +1,4 @@
-name: Update YouTube Player Script
+name: Update Player Script
 
 on:
   workflow_dispatch:
