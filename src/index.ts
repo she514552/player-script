@@ -22,7 +22,7 @@ class Workflow {
 		"s",
 	);
 	private readonly SIG_FUNCTION_ACTIONS_TCE_PATTERN = new RegExp(
-		String.raw`var\s+([A-Za-z0-9_]+)\s*=\s*\{\s*(?:[A-Za-z0-9_]+)\s*:\s*function\s*\([^)]*\)\s*\{[^{}]*(?:\{[^{}]*\}[^{}]*)*\}\s*,\s*(?:[A-Za-z0-9_]+)\s*:\s*function\s*\([^)]*\)\s*\{[^{}]*(?:\{[^{}]*\}[^{}]*)*\}\s*,\s*(?:[A-Za-z0-9_]+)\s*:\s*function\s*\([^)]*\)\s*\{[^{}]*(?:\{[^{}]*\}[^{}]*)*\}\s*\}\s*;`,
+		String.raw`var\s+([$A-Za-z0-9_]+)\s*=\s*\{\s*(?:[$A-Za-z0-9_]+)\s*:\s*function\s*\([^)]*\)\s*\{[^{}]*(?:\{[^{}]*\}[^{}]*)*\}\s*,\s*(?:[$A-Za-z0-9_]+)\s*:\s*function\s*\([^)]*\)\s*\{[^{}]*(?:\{[^{}]*\}[^{}]*)*\}\s*,\s*(?:[$A-Za-z0-9_]+)\s*:\s*function\s*\([^)]*\)\s*\{[^{}]*(?:\{[^{}]*\}[^{}]*)*\}\s*\}\s*;`,
 	);
 	private readonly YTCFG_EXTRACT_PATTERN = new RegExp(
 		String.raw`ytcfg\.set\((.*?)\);`,
