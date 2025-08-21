@@ -5,17 +5,18 @@
 	"private": true,
 	"scripts": {
 		"start": "bun run src/index.ts",
-		"build": "bun build ./src/index.ts --outdir ./dist"
+		"build": "bun build ./src/index.ts --outdir ./dist",
+		"format": "biome format --write ./src"
 	},
 	"devDependencies": {
-		"@biomejs/biome": "^1.9.4",
+		"@biomejs/biome": "^2.2.0",
 		"@types/bun": "latest"
 	},
 	"peerDependencies": {
-		"typescript": "^5"
+		"typescript": "^5.8.3"
 	},
 	"dependencies": {
-		"undici": "^7.10.0"
+		"undici": "^7.14.0"
 	},
 	"trustedDependencies": ["@biomejs/biome"]
 }

@@ -11,26 +11,17 @@ interface TceVariable {
 
 class Workflow {
 	private client: typeof fetch;
-	private readonly TCE_GLOBAL_VARIABLE_PATTERN = new RegExp(
-		String.raw`('use\s*strict';)?(?<code>var\s*(?<varname>[a-zA-Z0-9_$]+)\s*=\s*(?<value>(?:"[^"\\]*(?:\\.[^"\\]*)*"|'[^'\\]*(?:\\.[^'\\]*)*')\.split\((?:"[^"\\]*(?:\\.[^"\\]*)*"|'[^'\\]*(?:\\.[^'\\]*)*')\)|\[(?:(?:"[^"\\]*(?:\\.[^"\\]*)*"|'[^'\\]*(?:\\.[^'\\]*)*')\s*,?\s*)*\]|"[^"]*"\.split\("[^"]*"\)))`,
-	);
-	private readonly SIG_FUNCTION_TCE_PATTERN = new RegExp(
-		String.raw`function\(\s*([a-zA-Z0-9$])\s*\)\s*\{\s*\1\s*=\s*\1\[(\w+)\[\d+\]\]\(\2\[\d+\]\);([a-zA-Z0-9$]+)\[\2\[\d+\]\]\(\s*\1\s*,\s*\d+\s*\);\s*\3\[\2\[\d+\]\]\(\s*\1\s*,\s*\d+\s*\);\s*\3\[\2\[\d+\]\]\(\s*\1\s*,\s*\d+\s*\);.*?return\s*\1\[\2\[\d+\]\]\(\2\[\d+\]\)\}\s*\;`,
-	);
-	private readonly NSIG_FUNCTION_TCE_PATTERN = new RegExp(
-		String.raw`function\s*\((\w+)\)\s*\{var\s*\w+\s*=\s*\1\[\w+\[\d+\]\]\(\w+\[\d+\]\)\s*,\s*\w+\s*=\s*\[.*?\]\;.*?catch\s*\(\s*(\w+)\s*\)\s*\{return\s*\w+\[\d+\]\s*\+\s*\1\}\s*return\s*\w+\[\w+\[\d+\]\]\(\w+\[\d+\]\)\}\s*\;`,
-		"s",
-	);
-	private readonly SIG_FUNCTION_ACTIONS_TCE_PATTERN = new RegExp(
-		String.raw`var\s+([$A-Za-z0-9_]+)\s*=\s*\{\s*(?:[$A-Za-z0-9_]+)\s*:\s*function\s*\([^)]*\)\s*\{[^{}]*(?:\{[^{}]*\}[^{}]*)*\}\s*,\s*(?:[$A-Za-z0-9_]+)\s*:\s*function\s*\([^)]*\)\s*\{[^{}]*(?:\{[^{}]*\}[^{}]*)*\}\s*,\s*(?:[$A-Za-z0-9_]+)\s*:\s*function\s*\([^)]*\)\s*\{[^{}]*(?:\{[^{}]*\}[^{}]*)*\}\s*\}\s*;`,
-	);
-	private readonly YTCFG_EXTRACT_PATTERN = new RegExp(
-		String.raw`ytcfg\.set\((.*?)\);`,
-		"s",
-	);
-	private readonly SIGNATURE_TIMESTAMP_PATTERN = new RegExp(
-		String.raw`(signatureTimestamp|sts):(\d+)`,
-	);
+	private readonly TCE_GLOBAL_VARIABLE_PATTERN =
+		/('use\s*strict';)?(?<code>var\s*(?<varname>[a-zA-Z0-9_$]+)\s*=\s*(?<value>(?:"[^"\\]*(?:\\.[^"\\]*)*"|'[^'\\]*(?:\\.[^'\\]*)*')\.split\((?:"[^"\\]*(?:\\.[^"\\]*)*"|'[^'\\]*(?:\\.[^'\\]*)*')\)|\[(?:(?:"[^"\\]*(?:\\.[^"\\]*)*"|'[^'\\]*(?:\\.[^'\\]*)*')\s*,?\s*)*\]|"[^"]*"\.split\("[^"]*"\)))/;
+	private readonly SIG_FUNCTION_TCE_PATTERN =
+		/function\(\s*([a-zA-Z0-9$])\s*\)\s*\{\s*\1\s*=\s*\1\[(\w+)\[\d+\]\]\(\2\[\d+\]\);([a-zA-Z0-9$]+)\[\2\[\d+\]\]\(\s*\1\s*,\s*\d+\s*\);\s*\3\[\2\[\d+\]\]\(\s*\1\s*,\s*\d+\s*\);\s*\3\[\2\[\d+\]\]\(\s*\1\s*,\s*\d+\s*\);.*?return\s*\1\[\2\[\d+\]\]\(\2\[\d+\]\)\}\s*\;/;
+	private readonly NSIG_FUNCTION_TCE_PATTERN =
+		/function\s*\((\w+)\)\s*\{var\s*\w+\s*=\s*\1\[\w+\[\d+\]\]\(\w+\[\d+\]\)\s*,\s*\w+\s*=\s*\[.*?\]\;.*?catch\s*\(\s*(\w+)\s*\)\s*\{return\s*\w+\[\d+\]\s*\+\s*\1\}\s*return\s*\w+\[\w+\[\d+\]\]\(\w+\[\d+\]\)\}\s*\;/s;
+	private readonly SIG_FUNCTION_ACTIONS_TCE_PATTERN =
+		/var\s+([$A-Za-z0-9_]+)\s*=\s*\{\s*(?:["']?[$A-Za-z0-9_]+["']?)\s*:\s*function\s*\([^)]*\)\s*\{[^{}]*(?:\{[^{}]*\}[^{}]*)*\}\s*,\s*(?:["']?[$A-Za-z0-9_]+["']?)\s*:\s*function\s*\([^)]*\)\s*\{[^{}]*(?:\{[^{}]*\}[^{}]*)*\}\s*,\s*(?:["']?[$A-Za-z0-9_]+["']?)\s*:\s*function\s*\([^)]*\)\s*\{[^{}]*(?:\{[^{}]*\}[^{}]*)*\}\s*\}\s*;/;
+	private readonly YTCFG_EXTRACT_PATTERN = /ytcfg\.set\((.*?)\);/s;
+	private readonly SIGNATURE_TIMESTAMP_PATTERN =
+		/(signatureTimestamp|sts):(\d+)/;
 
 	constructor() {
 		this.client = fetch;
@@ -38,13 +29,17 @@ class Workflow {
 
 	private extractKeyValueRecursively(
 		key: string,
-		data: any,
-		maxDepth: number = 3,
-	): any {
-		const stack: [any, number][] = [[data, 0]];
+		data: Record<string, unknown>,
+		maxDepth = 3,
+	): unknown {
+		const stack: [Record<string, unknown>, number][] = [[data, 0]];
 
 		while (stack.length > 0) {
-			const [current, depth] = stack.pop()!;
+			const popped = stack.pop();
+			if (!popped) {
+				continue;
+			}
+			const [current, depth] = popped;
 
 			if (depth > maxDepth) {
 				console.debug(`Max depth ${maxDepth} reached, skipping deeper search.`);
@@ -57,9 +52,9 @@ class Workflow {
 					return v;
 				}
 
-				if (typeof v === "object" && v !== null) {
+				if (typeof v === "object" && v !== null && !Array.isArray(v)) {
 					console.debug(`Descending into key=${k} at depth=${depth + 1}`);
-					stack.push([v, depth + 1]);
+					stack.push([v as Record<string, unknown>, depth + 1]);
 				}
 			}
 		}
@@ -176,7 +171,7 @@ class Workflow {
 			);
 			return null;
 		}
-		return parseInt(match[2], 10);
+		return Number.parseInt(match[2], 10);
 	}
 
 	private fixNsigFunctionCode(
@@ -197,10 +192,9 @@ class Workflow {
 				pattern,
 				`;\n// ${match[0]} fixed short-circuit\n`,
 			);
-		} else {
-			console.info("No short-circuit match found in the script.");
-			return functionCode;
 		}
+		console.info("No short-circuit match found in the script.");
+		return functionCode;
 	}
 
 	private async buildMinifiedJavascriptFile(
@@ -254,9 +248,10 @@ class Workflow {
 			playerId,
 		);
 		const nsigFunction = this.extractTceNsigFunction(jsScript, playerId);
-		const finalNsigFunction = nsigFunction
-			? this.fixNsigFunctionCode(nsigFunction, playerId, tce!)
-			: null;
+		const finalNsigFunction =
+			nsigFunction && tce
+				? this.fixNsigFunctionCode(nsigFunction, playerId, tce)
+				: null;
 		const sigFunction = this.extractTceSigFunction(jsScript, playerId);
 		const sigFunctionActions = this.extractTceVariantSigFunctionActions(
 			jsScript,
@@ -279,15 +274,23 @@ class Workflow {
 			);
 		}
 
-		await this.buildMinifiedJavascriptFile(
-			playerId,
-			scriptUrl,
-			tce!,
-			sigFunction!,
-			finalNsigFunction!,
-			sigFunctionActions!,
-			signatureTimestamp!,
-		);
+		if (
+			tce &&
+			sigFunction &&
+			finalNsigFunction &&
+			sigFunctionActions &&
+			signatureTimestamp !== null
+		) {
+			await this.buildMinifiedJavascriptFile(
+				playerId,
+				scriptUrl,
+				tce,
+				sigFunction,
+				finalNsigFunction,
+				sigFunctionActions,
+				signatureTimestamp,
+			);
+		}
 	}
 }
 
