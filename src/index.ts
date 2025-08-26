@@ -14,9 +14,9 @@ class Workflow {
 	private readonly TCE_GLOBAL_VARIABLE_PATTERN =
 		/('use\s*strict';)?(?<code>var\s*(?<varname>[a-zA-Z0-9_$]+)\s*=\s*(?<value>(?:"[^"\\]*(?:\\.[^"\\]*)*"|'[^'\\]*(?:\\.[^'\\]*)*')\.split\((?:"[^"\\]*(?:\\.[^"\\]*)*"|'[^'\\]*(?:\\.[^'\\]*)*')\)|\[(?:(?:"[^"\\]*(?:\\.[^"\\]*)*"|'[^'\\]*(?:\\.[^'\\]*)*')\s*,?\s*)*\]|"[^"]*"\.split\("[^"]*"\)))/;
 	private readonly SIG_FUNCTION_TCE_PATTERN =
-		/function\(\s*([a-zA-Z0-9$])\s*\)\s*\{\s*\1\s*=\s*\1\[(\w+)\[\d+\]\]\(\2\[\d+\]\);([a-zA-Z0-9$]+)\[\2\[\d+\]\]\(\s*\1\s*,\s*\d+\s*\);\s*\3\[\2\[\d+\]\]\(\s*\1\s*,\s*\d+\s*\);\s*\3\[\2\[\d+\]\]\(\s*\1\s*,\s*\d+\s*\);.*?return\s*\1\[\2\[\d+\]\]\(\2\[\d+\]\)\}\s*\;/;
+		/function\(\s*([a-zA-Z0-9$])\s*\)\s*\{\s*\1\s*=\s*\1\[(\w+)\[\d+\]\]\(\2\[\d+\]\);([a-zA-Z0-9$]+)\[\2\[\d+\]\]\(\s*\1\s*,\s*\d+\s*\);\s*\3\[\2\[\d+\]\]\(\s*\1\s*,\s*\d+\s*\);\s*\3\[\2\[\d+\]\]\(\s*\1\s*,\s*\d+\s*\);.*?return\s*\1\[\2\[\d+\]\]\(\2\[\d+\]\)\}\s*;/;
 	private readonly NSIG_FUNCTION_TCE_PATTERN =
-		/function\s*\((\w+)\)\s*\{var\s*\w+\s*=\s*\1\[\w+\[\d+\]\]\(\w+\[\d+\]\)\s*,\s*\w+\s*=\s*\[.*?\]\;.*?catch\s*\(\s*(\w+)\s*\)\s*\{return\s*\w+\[\d+\]\s*\+\s*\1\}\s*return\s*\w+\[\w+\[\d+\]\]\(\w+\[\d+\]\)\}\s*\;/s;
+		/function\s*\((\w+)\)\s*\{var\s*\w+\s*=\s*\1\[\w+\[\d+\]\]\(\w+\[\d+\]\)\s*,\s*\w+\s*=\s*\[.*?\];.*?catch\s*\(\s*(\w+)\s*\)\s*\{return\s*\w+\[\d+\]\s*\+\s*\1\}\s*return\s*\w+\[\w+\[\d+\]\]\(\w+\[\d+\]\)\}\s*;/s;
 	private readonly SIG_FUNCTION_ACTIONS_TCE_PATTERN =
 		/var\s+([$A-Za-z0-9_]+)\s*=\s*\{\s*(?:["']?[$A-Za-z0-9_]+["']?)\s*:\s*function\s*\([^)]*\)\s*\{[^{}]*(?:\{[^{}]*\}[^{}]*)*\}\s*,\s*(?:["']?[$A-Za-z0-9_]+["']?)\s*:\s*function\s*\([^)]*\)\s*\{[^{}]*(?:\{[^{}]*\}[^{}]*)*\}\s*,\s*(?:["']?[$A-Za-z0-9_]+["']?)\s*:\s*function\s*\([^)]*\)\s*\{[^{}]*(?:\{[^{}]*\}[^{}]*)*\}\s*\}\s*;/;
 	private readonly YTCFG_EXTRACT_PATTERN = /ytcfg\.set\((.*?)\);/s;
