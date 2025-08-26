@@ -9,14 +9,12 @@
 		"format": "biome format --write ./src"
 	},
 	"devDependencies": {
-		"@biomejs/biome": "^2.2.0",
-		"@types/bun": "latest"
-	},
-	"peerDependencies": {
-		"typescript": "^5.8.3"
+		"@biomejs/biome": "^2.2.2",
+		"@types/bun": "latest",
+		"typescript": "^5.9.2"
 	},
 	"dependencies": {
-		"undici": "^7.14.0"
+		"undici": "^7.15.0"
 	},
 	"trustedDependencies": ["@biomejs/biome"]
 }
